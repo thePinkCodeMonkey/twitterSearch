@@ -17,6 +17,11 @@ body {
 	background: #FDF5E6;
 }
 
+#searchInput
+{
+	width:80%;
+}
+
 #notificationPanel
 {
 	color: #A52A2A;
@@ -60,4 +65,34 @@ body {
 #feedList .feedTimestamp {
 	font-size: 10px;
 	color:#D2691E;
+}
+
+#help{
+	border: 1px solid #000000;
+	padding: 2px;
+}
+
+a.toggleHelp {
+	line-height: 20px;
+	cursor: pointer;
+	text-decoration: underline;
+}
+a.toggleHelp:hover {
+	background: rgba(0, 0, 0, 0.15);
+	box-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0 0;
+}
+
+#helpTable{
+	border: 1px solid #000000;
+	margin-left:auto; 
+    margin-right:auto;
+    background-color: #FDF5E6;
+    border-collapse:collapse;
+
+}
+#helpTable th, #helpTable td{
+	border: 1px solid #000000;
+	margin-left:auto; 
+    margin-right:auto;
+    padding: 2px;
 }

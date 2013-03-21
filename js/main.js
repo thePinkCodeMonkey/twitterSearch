@@ -1,6 +1,6 @@
 // main js file containing the Backbone objects needed
 $(function(){
-	// Our basic **Todo** model has `title`, `order`, and `done` attributes.
+	// Basic tweet model
 	var TwitterFeed = Backbone.Model.extend({
 		idAttribute:"id",
 	    // Default attributes for the todo item.
@@ -22,6 +22,17 @@ $(function(){
 	    },	
 	});
 
+	// The view for a single feed
+	var TwitterFeedView = Backbone.View.extend({
+		tagName:  "li",
+		template: _.template($('#feed-template').html()),
+
+		render: function() {
+		  this.$el.html(this.template(this.model.toJSON()));
+		  return this;
+		},
+	});
+
 	//Collection of tweets
 	var TweetCollections = Backbone.Collection.extend({
 		model: TwitterFeed,
@@ -34,7 +45,7 @@ $(function(){
 			this.query = '';
 			this.sinceId = '0';
 	    },
-
+	    //helper function to contruct the parameter part of the request url
 	    constructUri: function()
 	    {
 	    	var uriParam = new Array();
@@ -43,7 +54,6 @@ $(function(){
 	    	uriParam.push('since_id='+escape(this.sinceId));
 			uriParam.push('callback=?');
 			return uriParam.join('&');
-
 	    },
 
 		//overwrite the parse function to collect the result and catch errors
@@ -86,22 +96,11 @@ $(function(){
 			this.sinceId = sinceId ||this.sinceId;
 		},
 	});
-
-	// The DOM element for a single feed
-	var TwitterFeedView = Backbone.View.extend({
-		tagName:  "li",
-		template: _.template($('#feed-template').html()),
-
-		render: function() {
-		  this.$el.html(this.template(this.model.toJSON()));
-		  return this;
-		},
-	});
 	
 	//create an actual collection for tweets
 	var TwitterFeeds = new TweetCollections;
 
-	//main application, handles the search
+	//main application, handles the search input logic
 	var AppView = Backbone.View.extend({
 		
 		el: $("#search"),
@@ -111,6 +110,7 @@ $(function(){
 		  "click #submitButton": "submitSearch",
 		  "click #refreshButton": "refreshFeed",
 		  "click #stopAutoRefresh": "stopTimer",
+		  "click a.toggleHelp" : "toggleHelp"
 		},
 
 		//Initialize the main application by loading last inputted search,
@@ -126,6 +126,7 @@ $(function(){
 			//binding shortcuts to DOM
 			this.searchInput = $('#searchInput');
 			this.refreshButton = $('#refreshButton');
+			this.stopRefreshButton = $('#stopAutoRefresh');
 			this.searchOverview = $('#currentSearchString');
 			this.notificationPanel = $('#notificationPanel');
 			this.notification = $('#notification');
@@ -141,9 +142,11 @@ $(function(){
 			//set up view
 			$('#feed').hide();
 			this.notificationPanel.hide();
+			$('#hideHelp').hide();
+			$('#helpReference').hide();
 		},
 
-		//call back to the reset event, adds a list of new feeds
+		//callback to the reset event, adds a list of new feeds
 		addNewFeed: function(){
 			$('#feedList li').removeClass("newFeed");
 			TwitterFeeds.each(function(m){
@@ -182,11 +185,13 @@ $(function(){
 			this.stopTimer();
 			fetchTweets();
 			this.intervalId = window.setInterval(fetchTweets, this.intervalInSec*1000);
+			this.stopRefreshButton.show();
 		},
 
 		//stops the timer for auto fetching feeds
 		stopTimer: function(){
 			window.clearInterval(this.intervalId);
+			this.stopRefreshButton.hide();
 		},
 
 		//display notifications if an error occurs and stops the auto refresh
@@ -194,9 +199,15 @@ $(function(){
 			this.notification.text(message);
 			this.notificationPanel.show().fadeOut(2000);
 			this.stopTimer();
+			this.stopRefreshButton.hide();
+		},
+
+		//toggle help table display
+		toggleHelp: function(){
+			$('a.toggleHelp').toggle();
+			$('#helpReference').toggle();
 		}
 	});
 
 	var App = new AppView;
-	window.app = App;
 });
