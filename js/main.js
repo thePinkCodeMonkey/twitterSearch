@@ -81,8 +81,7 @@ $(function(){
 
 	//main application, handles the search
 	var AppView = Backbone.View.extend({
-		// Instead of generating a new element, bind to the existing skeleton of
-		// the App already present in the HTML.
+		
 		el: $("#search"),
 
 		// Bind events for search submission and manual refresh
@@ -99,7 +98,6 @@ $(function(){
 			this.currentSearch = '';
 
 			//Listening to events on TwitterFeeds Collection
-			this.listenTo(TwitterFeeds, 'Tweets', this.addOne);
 			this.listenTo(TwitterFeeds, "reset", this.addNewFeed);
 
 			//binding shortcuts to DOM
@@ -110,14 +108,13 @@ $(function(){
 			//initialize search string if it has been stored in local storage
 			this.currentSearch = localStorage.getItem('lastTwitterFeedSearch')||'';
 			$('#searchInput').val(this.currentSearch);
+
+			//setup variables
+			this.intervalId = null;
+			this.intervalInSec = 5;
 		},
 
-		//
-		addOne: function(message){
-			console.log('Add event is thrown '+message);
-		},
-
-		//
+		//call back to the reset event, adds a list of new feeds
 		addNewFeed: function(){
 			TwitterFeeds.each(function(m){
 				var view = new TwitterFeedView({model: m});
@@ -140,11 +137,22 @@ $(function(){
 
 		//Refreshes the search with the this.currentSearch param, resets the timer
 		refreshFeed: function(){
+			var fetchTweets = function(){
+				TwitterFeeds.fetch({reset: true});
+			};
+
 			TwitterFeeds.setSearchParam(this.currentSearch);
-			TwitterFeeds.fetch({reset: true});
+			this.stopTimer();
+			this.intervalId = window.setInterval(fetchTweets, this.intervalInSec*1000);
 			console.log("Refreshing the feed "+this.currentSearch);
+		},
+
+		//stops the timer for auto fetching feeds
+		stopTimer: function(){
+			window.clearInterval(this.intervalId);
 		}
 	});
 
 	var App = new AppView;
+	window.app = App;
 });
