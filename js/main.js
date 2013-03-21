@@ -110,7 +110,8 @@ $(function(){
 		  "click #submitButton": "submitSearch",
 		  "click #refreshButton": "refreshFeed",
 		  "click #stopAutoRefresh": "stopTimer",
-		  "click a.toggleHelp" : "toggleHelp"
+		  "click a.toggleHelp" : "toggleHelp",
+		  "keypress #searchInput"  : "submitOnEnter"
 		},
 
 		//Initialize the main application by loading last inputted search,
@@ -206,6 +207,13 @@ $(function(){
 		toggleHelp: function(){
 			$('a.toggleHelp').toggle();
 			$('#helpReference').toggle();
+		},
+
+		//callback for handling search through the 'Enter' key
+		submitOnEnter: function(e){
+			if (e.keyCode == 13){
+				this.submitSearch();
+			};
 		}
 	});
 
