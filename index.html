@@ -8,18 +8,15 @@
 </head>
 
 <body>
-
   <div id="search">
-
     <header>
-      <h1>Tiwtter Feed Search</h1>
+      <h1>Twitter Feed Search</h1>
       <input id="searchInput" type="text" placeholder="input keyword">
       <button id='submitButton' name="search">Search</button>
-    </header>
-    
+    </header>    
     <section id="feed">
       <span id="currentSearchString">Currently Searching:</span><button id='refreshButton' name="refresh">Refresh</button>
-      <ul id="feed-list"></ul>
+      <ul id="feedList"></ul>
     </section>  
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script src="js/vendor/underscore.js"></script>
@@ -27,22 +24,15 @@
   <script src="js/main.js"></script>
 
   <!-- Templates -->
-
-  <script type="text/template" id="item-template">
-    <div class="view">
-      <input class="toggle" type="checkbox" <%= done ? 'checked="checked"' : '' %> />
-      <label><%- title %></label>
-      <a class="destroy"></a>
-    </div>
-    <input class="edit" type="text" value="<%- title %>" />
+  <script type="text/template" id="feed-template">
+    <div>
+      <img src="<%- profileImage %>" style="float:left">
+      <span class="feedUsername"><%- fromUsername %></span>
+      <br>
+      <span class='feedText'><%- tweetText %></span>
+      <br>
+      <span class='feedTimestamp'>Posted: <%- createDate %></span>
+  </div>
   </script>
-
-  <script type="text/template" id="stats-template">
-    <% if (done) { %>
-      <a id="clear-completed">Clear <%= done %> completed <%= done == 1 ? 'item' : 'items' %></a>
-    <% } %>
-    <div class="todo-count"><b><%= remaining %></b> <%= remaining == 1 ? 'item' : 'items' %> left</div>
-  </script>
-
   </body>
 </html>
