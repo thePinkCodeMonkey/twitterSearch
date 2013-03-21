@@ -2,7 +2,7 @@
 $(function(){
 	// Our basic **Todo** model has `title`, `order`, and `done` attributes.
 	var TwitterFeed = Backbone.Model.extend({
-
+		idAttribute:"id",
 	    // Default attributes for the todo item.
 	    defaults: function() {
 	      return {
@@ -26,25 +26,43 @@ $(function(){
 	var TweetCollections = Backbone.Collection.extend({
 		model: TwitterFeed,
 		url: function () {
-		  return 'http://search.twitter.com/search.json?q=' + this.query + '&page=' + this.page + '&callback=?'
+		  return 'http://search.twitter.com/search.json?q=' + this.query + '&page=' + this.page + '&since_id='+this.sinceId+'&callback=?'
 		},
 
 		initialize: function() {
 	    	this.page = 1;
 			this.query = '';
-	    },	
+			this.sinceId = '0';
+	    },
 
 		//overwrite the parse function to collect the result and catch errors
 		parse: function(resp, xhr) {
-		  console.log(resp.results);
-		  return resp.results;
+
+			//process each tweet slightly to extrac the info we want
+			var processedResult = new Array();
+			var iteratorFunc = function(response){
+				var newObj = {
+					from_user: response.from_user,
+					profile_image_url: response.profile_image_url,
+					text: response.text,
+					created_at: response.created_at,
+					id: response.id
+				};
+				//insert the tweets in reverse order
+				processedResult.unshift(newObj);
+			};
+			this.sinceId = resp.max_id_str;
+			_.each(resp.results, iteratorFunc);
+			return(processedResult);
+			//return resp.results;
 		},
 
 		//Sets all the parameters used
-		setSearchParam: function(searchParam, page)
+		setSearchParam: function(searchParam, page, sinceId)
 		{
-			this.page = page | 1;
+			this.page = page || 1;
 			this.query = searchParam;
+			this.sinceId = sinceId ||this.sinceId;
 		},
 	});
 
