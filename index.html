@@ -11,11 +11,15 @@
   <div id="search">
     <header>
       <h1>Twitter Feed Search</h1>
+      <section id="notificationPanel">
+              ! <span id="notification"></span>
+      </section>  
       <input id="searchInput" type="text" placeholder="input keyword">
       <button id='submitButton' name="search">Search</button>
-    </header>    
+    </header> 
     <section id="feed">
       <span id="currentSearchString">Currently Searching:</span><button id='refreshButton' name="refresh">Refresh</button>
+      <button id='stopAutoRefresh' name="refresh">Stop Auto Refresh</button>
       <ul id="feedList"></ul>
     </section>  
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -26,7 +30,7 @@
   <!-- Templates -->
   <script type="text/template" id="feed-template">
     <div>
-      <img src="<%- profileImage %>" style="float:left">
+      <img src="<%- profileImage %>">
       <span class="feedUsername"><%- fromUsername %></span>
       <br>
       <span class='feedText'><%- tweetText %></span>

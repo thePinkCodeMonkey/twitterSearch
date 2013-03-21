@@ -1,0 +1,63 @@
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+body {
+	font: 12px "Helvetica Neue", Helvetica, Arial, sans-serif;
+	line-height: 1.4em;
+	background: #90EE90;
+	color: #333333;
+	width: 520px;
+	margin: 0 auto;
+	-webkit-font-smoothing: antialiased;
+}
+.newFeed
+{
+	background: #FDF5E6;
+}
+
+#notificationPanel
+{
+	color: #A52A2A;
+	font-weight: bolder;
+	font-size: 20px;
+}
+
+#feedList {
+	margin: 10px 0;
+	padding: 0;
+	list-style: none;
+}
+
+#feedList li {
+	padding: 5px;
+	margin: 5px;
+	position: relative;
+	font-size: 12px;
+	border: 1px solid #000000;
+	border-radius: 8px;
+}
+
+#feedList img {
+	float:left;
+	background: black;
+	width:50px;
+	height: 50px;
+	margin: 0px 5px 0px 0px;
+}
+
+#feedList .feedUsername {
+	font-size: 12px;
+	font-weight: bold;
+	color:#000080;
+}
+
+#feedList .feedText {
+	font-size: 14px;
+}
+
+#feedList .feedTimestamp {
+	font-size: 10px;
+	color:#D2691E;
+}
