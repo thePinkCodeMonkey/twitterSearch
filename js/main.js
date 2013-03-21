@@ -1,7 +1,7 @@
 // main js file containing the Backbone objects needed
 $(function(){
 // Our basic **Todo** model has `title`, `order`, and `done` attributes.
-  var TwitterFeed = Backbone.Model.extend({
+var TwitterFeed = Backbone.Model.extend({
 
     // Default attributes for the todo item.
     defaults: function() {
@@ -15,49 +15,97 @@ $(function(){
 
     //intialize the feed
     initialize: function(fromUsername, profileImage, tweetText, createDate) {
-      this.set({"fromUsername": fromUsername});
-      this.set({"profileImage": profileImage});
-      this.set({"tweetText": tweetText});
-      this.set({"createDate": createDate});
-    },
-  });
-  
-  //main application, handles the search
-  var AppView = Backbone.View.extend({
+    	this.set({"fromUsername": fromUsername});
+		this.set({"profileImage": profileImage});
+		this.set({"tweetText": tweetText});
+		this.set({"createDate": createDate});
+    },	
+});
 
-    // Instead of generating a new element, bind to the existing skeleton of
-    // the App already present in the HTML.
-    el: $("#search"),
+//Collection of tweets
+var TweetCollections = Backbone.Collection.extend({
+	model: TwitterFeed,
+	url: function () {
+	  return 'http://search.twitter.com/search.json?q=' + this.query + '&page=' + this.page + '&callback=?'
+	},
 
-    // Bind events for search submission and manual refresh
-    events: {
-      "click #submitButton": "submitSearch",
-      "click #refreshButton": "refreshFeed"
-    },
+	initialize: function() {
+    	this.page = 1;
+		this.query = '';
+    },	
 
-    //Initialize the main application by loading last inputted search,
-    //biding shortcuts to elements and listening to the twitter feed collection
-    initialize: function()
-    {
-    	this.searchInput = $('#searchInput');
-    	this.refreshButton = $('#refreshButton');
-    	this.searchOverview = $('#currentSearchString');
-    	$('#feed').hide();
-    	this.currentSearch = '';
-    },
+	//overwrite the parse function to collect the result and catch errors
+	parse: function(resp, xhr) {
+	  console.log(resp);
+	  this.trigger("Tweets","Got something from server.");
+	  return resp.results;
+	},
 
-    //Validates user search input and initiate the twitter search API call
-    //Resets the timer if the input is valid
-    submitSearch: function(){
-    	this.currentSearch = this.searchInput.val();
-    	$('#feed').show();
-    	this.searchOverview.text("Currently Searching for '"+this.currentSearch+"'.");
-    	this.refreshFeed();
-    },
+	//Sets all the parameters used
+	setSearchParam: function(searchParam, page)
+	{
+		this.page = page | 1;
+		this.query = searchParam;
+	},
+});
 
-    refreshFeed: function(){
-    	console.log("Refreshing the feed "+this.currentSearch);
-    },
+var TwitterFeeds = new TweetCollections;
+
+//main application, handles the search
+var AppView = Backbone.View.extend({
+	// Instead of generating a new element, bind to the existing skeleton of
+	// the App already present in the HTML.
+	el: $("#search"),
+
+	// Bind events for search submission and manual refresh
+	events: {
+	  "click #submitButton": "submitSearch",
+	  "click #refreshButton": "refreshFeed"
+	},
+
+	//Initialize the main application by loading last inputted search,
+	//biding shortcuts to elements and listening to the twitter feed collection
+	initialize: function()
+	{
+		$('#feed').hide();
+		this.currentSearch = '';
+
+		//Listening to events on TwitterFeeds Collection
+		this.listenTo(TwitterFeeds, 'Tweets', this.addOne);
+
+		//binding shortcuts to DOM
+		this.searchInput = $('#searchInput');
+		this.refreshButton = $('#refreshButton');
+		this.searchOverview = $('#currentSearchString');
+
+		//initialize search string if it has been stored in local storage
+		this.currentSearch = localStorage.getItem('lastTwitterFeedSearch')||'';
+		$('#searchInput').val(this.currentSearch);
+	},
+
+	//
+	addOne: function(message){
+		console.log('Add event is thrown '+message);
+	},
+	
+	//Validates user search input and initiate the twitter search API call
+	//Resets the timer if the input is valid
+	submitSearch: function(){
+		//validate
+		this.currentSearch = this.searchInput.val();
+		$('#feed').show();
+		this.searchOverview.text("Currently Searching for '"+this.currentSearch+"'.");
+		//save search string to local storage
+		localStorage.setItem('lastTwitterFeedSearch', this.currentSearch);
+		this.refreshFeed();
+	},
+
+	//Refreshes the search with the this.currentSearch param, resets the timer
+	refreshFeed: function(){
+		TwitterFeeds.setSearchParam(this.currentSearch);
+		TwitterFeeds.fetch({success: function (tweets){}});
+		console.log("Refreshing the feed "+this.currentSearch);
+	}
 
     // At initialization we bind to the relevant events on the `Todos`
     // collection, when items are added or changed. Kick things off by
