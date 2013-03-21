@@ -17,11 +17,58 @@
       <input id="searchInput" type="text" placeholder="input keyword">
       <button id='submitButton' name="search">Search</button>
     </header> 
+    <section id="help">
+      <a class="toggleHelp" id="showHelp">Display Help</a>
+      <a class="toggleHelp" id="hideHelp">Hide Help</a>
+      <section id="helpReference">
+         <table id="helpTable">
+            <caption>Search Help - simple search examples</caption>
+            <thead>
+              <tr>
+                <th>Example</th>
+                <th>Explaination</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Banana boat</td>
+                <td>Search for tweets containing both "Banana" and "boat".</td>
+              </tr>
+              <tr>
+                <td>
+                  <b>"</b>Banana boat<b>"</b>
+                </td>
+                <td>Search for tweets containing the exact phrase "Banana boat".</td></tr>
+              <tr>
+                <td>cats <b>OR</b> dogs</td>
+                <td>Search for tweets containing either "cats" or "dogs" (or both).</td>
+              </tr>
+              <tr>
+                <td><b>#</b>vancouver</td>
+                <td>Search for tweets containing the hashtag "vancouver".</td>
+              </tr>
+              <tr>
+                <td><b>from:</b>kuluabunny</td>
+                <td>Search for tweets sent from user "kuluabunny".</td>
+              </tr>
+              <tr>
+                <td><b>to:</b>kuluabunny</td>
+                <td>Search for tweets sent to user "kuluabunny".</td>
+              </tr>
+              <tr>
+                <td><b>@</b>kuluabunny</td>
+                <td>Search for tweets referencing user "kuluabunny".</td>
+              </tr>
+            </tbody>
+          </table>
+          PS.  You can chain those together, i.e. Typing <b>@kittycommittee kitten</b> will search for tweets referencing @kittycommittee user that contains the word "kitten".
+      </section>
+    </section>
     <section id="feed">
       <span id="currentSearchString">Currently Searching:</span><button id='refreshButton' name="refresh">Refresh</button>
       <button id='stopAutoRefresh' name="refresh">Stop Auto Refresh</button>
       <ul id="feedList"></ul>
-    </section>  
+    </section>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script src="js/vendor/underscore.js"></script>
   <script src="js/vendor/backbone.js"></script>
